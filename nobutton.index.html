@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Need Guideline, try harder!!</title>
+<style>
+  body { font-family: Arial; text-align: center; padding-top: 100px; }
+  button { font-size: 20px; padding: 10px 30px; margin: 10px; border: 4px dashed black; background-color: lightpink; color: black ; border-radius: 12px; }
+  #yes { background-color: pink; }
+  #no { background-color: pink; }
+  #no:hover { background-color: lightblue; }
+</style>
+</head>
+<body>
+  <h1>Do you enjoy the class?</h1>
+  <p>Be honest!</p>
+  <button id="yes">Yes</button>
+  <button id="no">No</button>
+  <p id="message"></p>
+  <p id="tries"></p>
+
+<script>
+  const noButton = document.getElementById("no");
+  const yesButton = document.getElementById("yes");
+  let tries = 0;
+
+  function moveYes() {
+    yesButton.style.position = "absolute";
+    const x = Math.random() * (window.innerWidth - yesButton.offsetWidth);
+    const y = Math.random() * (window.innerHeight - yesButton.offsetHeight);
+    yesButton.style.left = x + "px";
+    yesButton.style.top = y + "px";
+
+    tries = tries + 1;
+    
+
+  if (tries >= 40) {
+    document.getElementById("tries").textContent = `${tries} tries! Still here?😂`;
+  } else if (tries >= 30) {
+    document.getElementById("tries").textContent = `${tries} tries! Just give up and click No 😂`;
+  } else if (tries >= 20) {
+    document.getElementById("tries").textContent = `${tries} tries... you're very determined!`;
+  } else {
+    document.getElementById("tries").textContent = `You tried ${tries} times!`;
+  }
+}
+
+yesButton.addEventListener("mouseover", moveYes);
+yesButton.addEventListener("touchstart", function (e) {
+  e.preventDefault();
+  moveYes();
+});
+
+  noButton.addEventListener("click", function () {
+   window.location.href = "thanks.html";
+  });
+</script>
+</body>
+</html>
