@@ -3,45 +3,152 @@
 <head>
 <title>Need Guideline, try harder!!</title>
 <style>
-  body { font-family: Arial; text-align: center; padding-top: 100px; }
-  button { font-size: 20px; padding: 10px 30px; margin: 10px; border: 4px dashed black; background-color: lightpink; color: black ; border-radius: 12px; }
-  #yes { background-color: pink; }
-  #no { background-color: pink; }
-  #no:hover { background-color: lightblue; }
+  body { font-family: Arial; text-align: center; padding-top: 100px; margin: 0; min-height: 100vh; background: url("forest.jpg") no-repeat center / cover; box-sizing: border-box; }
+  button { font-size: 20px; padding: 10px 30px; margin: 10px; border: 4px dashed black;
+  background-color: lightpink; color: black ; border-radius: 12px; }
+
+h1 { color: purple; }
+p { color: purple; }
+#tries { color: hotpink; font-weight: bold; }
+
+.pink { color: hotpink; }
+
+.card { background: rgba(255, 255, 255, 0.3); max-width: 400px; margin: 0 auto; padding: 30px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+ 
+#yes {
+  border: none;
+  background: url("butterfly.png") no-repeat center / contain;
+  width: 140px;
+  height: 100px;
+  font-size: 22px;
+}
+
+  #no {   border: none;
+  background: url("worm.png") no-repeat center / contain;
+  width: 80px;
+  height: 60px;
+  font-size: 22px;
+}
+
+button { transition: transform 0.2s; }
+#no:hover { transform: scale(1.2); }
+
+@keyframes stand {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+.stand { animation: stand 3s infinite; }
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.tired { animation: breathe 1.2s infinite; }
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+.running { animation: bounce 0.3s infinite; }
+
+#buddy { position: absolute; }
+
 </style>
 </head>
 <body>
-  <h1>Do you enjoy the class?</h1>
+<div class="card">
+  <h1>Do you <span class="pink">enjoy</span> the class? 🤔</h1>
   <p>Be honest!</p>
   <button id="yes">Yes</button>
   <button id="no">No</button>
-  <p id="message"></p>
   <p id="tries"></p>
+</div>
 
+<img id="buddy" src="stand.png" class="stand" width="120">
 <script>
-  const noButton = document.getElementById("no");
-  const yesButton = document.getElementById("yes");
-  let tries = 0;
+  
+const buddy = document.getElementById("buddy");
+const noButton = document.getElementById("no");
+const yesButton = document.getElementById("yes");
 
-  function moveYes() {
-    yesButton.style.position = "absolute";
-    const x = Math.random() * (window.innerWidth - yesButton.offsetWidth);
-    const y = Math.random() * (window.innerHeight - yesButton.offsetHeight);
-    yesButton.style.left = x + "px";
-    yesButton.style.top = y + "px";
+let tries = 0; 
+let tiredTimer; 
+let standTimer;
 
-    tries = tries + 1;
+const start = yesButton.getBoundingClientRect();
+let buddyY = start.top;
+let buddyX = start.left - 15;
+buddy.style.left = buddyX + "px";
+buddy.style.top = start.top + "px";
+
+//yesButton will runaway
+
+function moveYes() {
+  yesButton.style.position = "absolute";
+  const x = Math.random() * (window.innerWidth - yesButton.offsetWidth);
+  const y = Math.random() * (window.innerHeight - yesButton.offsetHeight);
+  yesButton.style.left = x + "px";
+  yesButton.style.top = y + "px";
+
+//buddy will move from position to postion
+
+let newX;
+if(x > buddyX) {
+    newX = x - buddy.offsetWidth;
+} else {
+    newX = x + yesButton.offsetWidth;
+}
+
+ const distance = Math.hypot(newX - buddyX, y - buddyY);
+ const time = Math.max(distance / 300, 0.3);
+ buddy.style.transition = `left ${time}s, top ${time}s`;
+
+if (newX < buddyX) {
+  buddy.style.scale = "-1 1";
+} else {
+  buddy.style.scale = "1 1";
+}
+
+buddyX = newX;
+buddyY = y;
+buddy.style.left = newX + "px";
+buddy.style.top = y + "px";
+
+clearTimeout(tiredTimer);
+ buddy.classList.remove("tired"); 
+
+clearTimeout(standTimer);
+ buddy.classList.remove("stand"); 
+ buddy.classList.add("running");
+
+buddy.src = "run.png";
+
+tiredTimer = setTimeout(function () {
+  buddy.classList.remove("running");
+  buddy.classList.add("tired"); 
+  buddy.src = "tired.png";
+
+standTimer = setTimeout(function () {
+  buddy.classList.remove("tired");
+  buddy.classList.add("stand");
+  buddy.src = "stand.png";
+ }, 5000);
+}, time * 1000);
+
+tries = tries + 1;
     
+let message;
 
-  if (tries >= 40) {
-    document.getElementById("tries").textContent = `${tries} tries! Still here?😂`;
+if (tries >= 40) {
+    message = `${tries} tries! Still here?😂`;
   } else if (tries >= 30) {
-    document.getElementById("tries").textContent = `${tries} tries! Just give up and click No 😂`;
+    message = `${tries} tries! Just give up and click No 😂`;
   } else if (tries >= 20) {
-    document.getElementById("tries").textContent = `${tries} tries... you're very determined!`;
+    message = `${tries} tries... you're very determined!`;
   } else {
-    document.getElementById("tries").textContent = `You tried ${tries} times!`;
-  }
+    message = `You tried ${tries} times!`;
+ }
+  document.getElementById("tries").textContent = message;
 }
 
 yesButton.addEventListener("mouseover", moveYes);
@@ -50,9 +157,10 @@ yesButton.addEventListener("touchstart", function (e) {
   moveYes();
 });
 
-  noButton.addEventListener("click", function () {
+noButton.addEventListener("click", function () {
    window.location.href = "thanks.html";
   });
+
 </script>
 </body>
 </html>
